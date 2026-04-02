@@ -9,7 +9,7 @@
 
 ## Description
 
-A command-line tool designed to solve the **Linked-Customer Vehicle Routing Problem (LCVRP)** using a Genetic Algorithm. This project optimizes delivery routes by simulating evolutionary processes—such as tournament selection, single-point crossover, and uniform mutation—to minimize total travel distance while respecting vehicle capacity constraints. It supports standard datasets and calculates distances using both Euclidean (`EUC_2D`) and explicit weight matrices.
+A command-line tool designed to solve the **Limited Capacitated Vehicle Routing Problem (LcVRP)** using a Genetic Algorithm. This project optimizes delivery routes by simulating evolutionary processes—such as tournament selection, single-point crossover, and uniform mutation — to minimize total travel distance while respecting vehicle capacity constraints. It supports standard datasets and calculates distances using both Euclidean (`EUC_2D`) and explicit weight matrices.
 
 
 ## Technologies
@@ -20,7 +20,7 @@ A command-line tool designed to solve the **Linked-Customer Vehicle Routing Prob
 
 ## Installation and build
 
-The project was made using C++11. Example files with problem data are located in `data\lcvrp` folder.
+The project was made using C++ 11. Example files with problem data are located in `data\lcvrp` folder.
 
 ## Project structure
 
