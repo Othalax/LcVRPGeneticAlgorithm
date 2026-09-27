@@ -1,8 +1,7 @@
 #include "ProblemLoader.hpp"
 
-
-ProblemLoader::ProblemLoader(const std::string& filepath)
-	: filepath(filepath), useRandomPerm(true) {}
+ProblemLoader::ProblemLoader(std::string filepath)
+    : filepath(std::move(filepath)), useRandomPerm(true) {}
 
 ProblemData ProblemLoader::LoadProblem() {
     ProblemData problem_data;
@@ -10,7 +9,7 @@ ProblemData ProblemLoader::LoadProblem() {
     ParseLcVrpFile(filepath, problem_data);
 
     if (useRandomPerm) {
-        int num_customers = problem_data.getNumCustomers();
+        const int num_customers = problem_data.getNumCustomers();
         std::vector<int> permutation;
         permutation.reserve(num_customers);
 
@@ -26,60 +25,50 @@ ProblemData ProblemLoader::LoadProblem() {
     return problem_data;
 }
 
-void ProblemLoader::ParseLcVrpFile(const std::string& file_path, ProblemData& problem_data) 
-{
-	std::ifstream file;
+void ProblemLoader::ParseLcVrpFile(const std::string& file_path, ProblemData& problem_data) {
+    std::ifstream file;
     try {
         file.open(file_path);
         if (!file.is_open()) {
             throw std::invalid_argument("Error: Cannot open file: " + file_path);
         }
-    }
-    catch(const std::invalid_argument& e){
+    } catch (const std::invalid_argument& e) {
         std::cerr << e.what() << '\n';
-		exit(1);
-	}
+        exit(1);
+    }
     std::string token;
     std::string colon;
 
     while (file >> token) {
         if (token == "DIMENSION") {
-            int dim;
+            int dim{};
             file >> colon >> dim;
             problem_data.SetDimension(dim);
-        }
-        else if (token == "CAPACITY") {
-            int cap;
+        } else if (token == "CAPACITY") {
+            int cap{};
             file >> colon >> cap;
             problem_data.SetCapacity(cap);
-        }
-        else if (token == "EDGE_WEIGHT_TYPE") {
+        } else if (token == "EDGE_WEIGHT_TYPE") {
             std::string type;
             file >> colon >> type;
             problem_data.SetEdgeWeightType(type);
-        }
-        else if (token == "NUM_GROUPS") {
-            int groups;
+        } else if (token == "NUM_GROUPS") {
+            int groups{};
             file >> colon >> groups;
             problem_data.SetNumGroups(groups);
-        }
-        else if (token == "EDGE_WEIGHT_SECTION") {
+        } else if (token == "EDGE_WEIGHT_SECTION") {
             ParseEdgeWeightSection(file, problem_data);
-        }
-        else if (token == "NODE_COORD_SECTION") {
+        } else if (token == "NODE_COORD_SECTION") {
             ParseNodeCoordSection(file, problem_data);
-        }
-        else if (token == "DEMAND_SECTION") {
+        } else if (token == "DEMAND_SECTION") {
             ParseDemandSection(file, problem_data);
-        }
-        else if (token == "DEPOT_SECTION") {
+        } else if (token == "DEPOT_SECTION") {
             ParseDepotSection(file, problem_data);
-        }
-        else if (token == "PERMUTATION") {
+        } else if (token == "PERMUTATION") {
             file >> colon;
-            int num_cust = problem_data.getNumCustomers();
+            const int num_cust = problem_data.getNumCustomers();
             std::vector<int> perm;
-            int val;
+            int val{};
             for (int k = 0; k < num_cust; ++k) {
                 file >> val;
                 perm.push_back(val);
@@ -90,23 +79,21 @@ void ProblemLoader::ParseLcVrpFile(const std::string& file_path, ProblemData& pr
 
     file.close();
 
-    if (problem_data.isDataIncomplete())
-    {
-		throw std::invalid_argument("Error: Something wrong with the file");
+    if (problem_data.isDataIncomplete()) {
+        throw std::invalid_argument("Error: Something wrong with the file");
     }
-
 }
 
 void ProblemLoader::ParseEdgeWeightSection(std::ifstream& file, ProblemData& problem_data) {
-    int dimension = problem_data.getDimension();
+    const int dimension = problem_data.getDimension();
     std::vector<std::vector<double>> edge_weights(dimension, std::vector<double>(dimension, 0.0));
 
     for (int i = 1; i < dimension; ++i) {
         for (int j = 0; j < i; ++j) {
-            double weight;
+            double weight{};
             file >> weight;
-            edge_weights[i][j] = weight;
-            edge_weights[j][i] = weight;
+            edge_weights.at(i).at(j) = weight;
+            edge_weights.at(j).at(i) = weight;
         }
     }
 
@@ -114,16 +101,17 @@ void ProblemLoader::ParseEdgeWeightSection(std::ifstream& file, ProblemData& pro
 }
 
 void ProblemLoader::ParseNodeCoordSection(std::ifstream& file, ProblemData& problem_data) {
-    int dimension = problem_data.getDimension();
+    const int dimension = problem_data.getDimension();
     std::vector<Coordinate> coordinates(dimension);
 
-    int id;
-    double x, y;
+    int id{};
+    double x{};
+    double y{};
 
     for (int i = 0; i < dimension; ++i) {
         file >> id >> x >> y;
         if (id >= 1 && id <= dimension) {
-            coordinates[id - 1] = Coordinate(x, y);
+            coordinates.at(id - 1) = Coordinate(x, y);
         }
     }
 
@@ -131,14 +119,15 @@ void ProblemLoader::ParseNodeCoordSection(std::ifstream& file, ProblemData& prob
 }
 
 void ProblemLoader::ParseDemandSection(std::ifstream& file, ProblemData& problem_data) {
-    int dimension = problem_data.getDimension();
+    const int dimension = problem_data.getDimension();
     std::vector<int> demands(dimension);
 
-    int id, demand;
+    int id{};
+    int demand{};
     for (int i = 0; i < dimension; ++i) {
         file >> id >> demand;
         if (id >= 1 && id <= dimension) {
-            demands[id - 1] = demand;
+            demands.at(id - 1) = demand;
         }
     }
 
@@ -146,10 +135,10 @@ void ProblemLoader::ParseDemandSection(std::ifstream& file, ProblemData& problem
 }
 
 void ProblemLoader::ParseDepotSection(std::ifstream& file, ProblemData& problem_data) {
-    int depot;
+    int depot{};
     file >> depot;
     problem_data.SetDepot(depot);
 
-    int terminator;
+    int terminator{};
     file >> terminator;
 }

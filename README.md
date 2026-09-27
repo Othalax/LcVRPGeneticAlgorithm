@@ -22,15 +22,36 @@ A command-line tool designed to solve the **Limited Capacitated Vehicle Routing 
 
 The project was made using C++ 11. Example files with problem data are located in `data\lcvrp` folder.
 
+
+### Build
+
+```bash
+cmake -B build -G "Ninja"
+cmake --build build
+```
+
+### Run
+
+```bash
+.\build\LcVRPGeneticAlgorithm.exe
+```
+
 ## Project structure
 
-``` bash
-src/
-├── main.cpp                 # Entry point: initializes the GA execution
-├── Interface.h/.cpp         # I/O: manages user parameters and program flow
-├── ProblemLoader.hpp/.cpp   # Parser: reads .lcvrp files and generates initial permutations
-├── ProblemData.hpp/.cpp     # Data Model: handles distance calculations and constraints
-├── GeneticAlgorithm.h/.cpp  # Engine: manages the population loop and stagnation logic
-├── Individual.h/.cpp        # Phenotype: handles crossover and mutation operations
-└── Evaluator.hpp/.cpp       # Genotype: builds routes and validates capacity constraints
+```bash
+├── include/
+│   ├── Interface.h          # I/O: header for managing user parameters and program flow
+│   ├── ProblemLoader.hpp    # Parser: header for loading .lcvrp files and generating initial permutations
+│   ├── ProblemData.hpp      # Data Model: header for distance calculations and constraints logic
+│   ├── GeneticAlgorithm.h   # Engine: header for population loop and stagnation handling
+│   ├── Individual.h         # Phenotype: header for solution representation, crossover, and mutation
+│   └── Evaluator.hpp        # Genotype: header for route construction and capacity validation
+└── src/
+    ├── main.cpp             # Entry point: initializes the GA execution
+    ├── Interface.cpp        # I/O: manages user parameters and program flow implementation
+    ├── ProblemLoader.cpp    # Parser: reads .lcvrp files and generates initial permutations
+    ├── ProblemData.cpp      # Data Model: handles distance calculations and constraints implementation
+    ├── GeneticAlgorithm.cpp # Engine: manages the population loop and stagnation logic implementation
+    ├── Individual.cpp       # Phenotype: handles crossover and mutation operations implementation
+    └── Evaluator.cpp        # Genotype: builds routes and validates capacity constraints implementation
 ```
